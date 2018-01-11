@@ -1,0 +1,251 @@
+.input,
+.button,
+.section,
+.section::before {
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.label,
+.button {
+  transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.checkbox + span,
+.container,
+.section {
+  position: relative;
+}
+
+#error-msg {
+  position: absolute;
+}
+
+.container {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+}
+.container.login {
+  padding-top: 10%;
+}
+
+.logo {
+  display: block;
+  height: 100px;
+  width: 100px;
+  padding: 20px;
+  margin: auto;
+  filter: drop-shadow(0 15px 15px rgba(0,132,255, 0.2));
+}
+
+.first-msg {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+#error-msg {
+  width: 100%;
+  bottom: -60px;
+  text-align: center;
+}
+#error-msg.error {
+  color: #F03D25;
+}
+
+.link {
+  text-align: center;
+}
+
+.section-button,
+.section-input {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.section-button span {
+  font-weight: 600;
+}
+
+.section-input {
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  margin: 20px 0;
+}
+.section-input::before {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+}
+.section-input.active {
+  border-color: #0084FF;
+}
+.section-input.active::before {
+  box-shadow: 0 2px #0084FF;
+}
+.section-input.error {
+  border-color: #F03D25;
+}
+.section-input.error + .label {
+  color: #F03D25;
+}
+.section-input.error::before {
+  box-shadow: 0 2px #F03D25;
+}
+
+.input {
+  width: calc(100% - 10px);
+  /*margin: 10px;*/
+  padding: 5px;
+  /*border-bottom: 1px solid rgba(0,0,0,0.2);*/
+  overflow-x: hidden;
+}
+
+.input-password {
+  width: calc(100% - 70px);
+}
+
+.label.label-password {
+  display: inline;
+  right: 20px;
+  top: 5px;
+  cursor: pointer;
+  pointer-events: none;
+  opacity: 0;
+  margin-left: 10px;
+}
+.label.label-password.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.section-checkbox {
+  text-align: center;
+}
+.section-checkbox p {
+  font-size: 14px;
+  padding: 10px;
+  margin: 0 10px 20px;
+}
+.checkbox {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  transform: translateY(5px);
+  opacity: 0;
+  cursor: pointer;
+}
+.checkbox + span {
+  display: inline-block;
+  margin-right: 10px;
+  transform: translateY(4px);
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  box-shadow: 0 2.5px 5px rgba(var(--red),var(--green),var(--blue), 0.2);
+  pointer-events: none;
+  border: 1px inset rgba(0,0,0,0.12);
+}
+.checkbox + span::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 18px;
+  width: 18px;
+  border-radius: 5px;
+  transform: translate(-50%,-50%) scale(0);
+  background-color: rgba(0,132,255, 1);
+  pointer-events: none;
+  transition: all 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+.checkbox + span.active::before {
+  transform: translate(-50%,-50%) scale(1);
+}
+.checkbox-check {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  overflow: hidden;
+}
+.checkbox-check svg {
+  height: 16px;
+  width: 16px;
+  fill: #fff;
+}
+
+.button {
+  display: block;
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 20px 15px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 400;
+  box-shadow: 0 10px 20px rgba(var(--red),var(--green),var(--blue), 0.15);
+  cursor: pointer;
+  transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+.button-submit:not(.ready) {
+  font-weight: 600;
+}
+.button.disabled {
+  color: rgba(0,0,0, 0.36);
+  background-color: rgba(0,0,0, 0.06);
+  cursor: not-allowed;
+  font-weight: 600;
+}
+.button.disabled::after {
+  background-color: rgba(0,132,255, 0.12);
+}
+.button:not(.disabled):active {
+  box-shadow: 0 5px 10px rgba(var(--red),var(--green),var(--blue), 0.3);
+  transform: translateY(4px);
+}
+.button::after,
+.button-submit::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  background-color: rgba(0,0,0,0);
+  pointer-events: none;
+  transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+.button-submit::before {
+  z-index: -1;
+}
+.button:not(.disabled):active::after {
+  background-color: rgba(0,0,0,0.12);
+}
+
+.button-submit {
+  background-color: #0084FF;
+}
+.button-submit:not(.disabled):hover::after {
+  background-color: rgba(0,0,0, 0.06);
+}
+
+.button-signup {
+  background-color: #3B5998;
+}
+
+@media (min-width: 662.5px) {
+  .section-input {
+    width: 530px;
+  }
+  
+  .button.button {
+    width: 300px;
+  }
+  .section-button {
+    width: 330px;
+  }
+}
