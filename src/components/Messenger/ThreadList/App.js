@@ -66,7 +66,7 @@ export default class ThreadList extends Component {
       threadListItem.push(<ThreadListItem 
         key={i} 
         compKey={list[i]} 
-        onClick={this.onThreadClick.bind(this)}
+        compClick={this.onThreadClick.bind(this)}
       />);
     }
 

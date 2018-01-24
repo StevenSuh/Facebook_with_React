@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 // import {updateThreadList} from '../../actions';
+import {hexToRgb} from '../../actions/utils';
 const {ipcRenderer, shell} = window.require('electron');
 
 import ThreadList from './ThreadList/App';
@@ -36,6 +37,21 @@ class Messenger extends Component {
 
   onCurrUserUpdate(value) {
     value.myProfile = `https://graph.facebook.com/${this.props.user.id}/picture?width=50&height=50`;
+
+    if (this.state.currThread.threadID) document.getElementById(`list-item-${this.state.currThread.threadID}`).classList.remove('active');
+    document.getElementById(`list-item-${value.threadID}`).classList.add('active');
+    
+    if (value.color) {
+      const color = hexToRgb(value.color.slice(2));
+      console.log(color);
+      document.documentElement.style.setProperty('--red', color.r);
+      document.documentElement.style.setProperty('--green', color.g);
+      document.documentElement.style.setProperty('--blue', color.b);
+    } else {
+      document.documentElement.style.setProperty('--red', 0);
+      document.documentElement.style.setProperty('--green', 132);
+      document.documentElement.style.setProperty('--blue', 255);
+    }
     this.setState({currThread: value});
   }
 
@@ -54,6 +70,9 @@ class Messenger extends Component {
         <Loader />
         
         <div className="main-header">
+          <div className="user">
+            <p>{this.props.user.name}</p>
+          </div>
           <svg 
             onClick={this.onHeaderClick}
             data-href="https://www.messenger.com"

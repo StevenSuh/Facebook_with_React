@@ -11,6 +11,7 @@ export default class ThreadListItem extends Component {
 
   onAnchorClick(event) {
     event.preventDefault();
+    this.props.compClick(event);
   }
 
   render() {
@@ -33,12 +34,11 @@ export default class ThreadListItem extends Component {
     }
 
     const pic = [];
-    Object.values(key.profilePics).forEach((img, i) => {
-      if (i >= 3) return;
-
-      const className = (i === 0) ? 'single' : 'double'; 
+    const pics = Object.values(key.profilePics);
+    const className = `img-${pics.length > 4 ? 4 : pics.length}`;
+    pics.forEach((img, i) => {
+      if (i >= 4) return;
       img += '?width=80&height=80';
-
       pic.push(
         <img
           key={i}
@@ -62,7 +62,7 @@ export default class ThreadListItem extends Component {
         data-index={key.index}
         id={`list-item-${key.threadID}`}
         href="/"
-        onClick={this.onAnchorClick}
+        onClick={this.onAnchorClick.bind(this)}
       >
         <div className="thread-list-item-status" />
 
@@ -83,7 +83,7 @@ export default class ThreadListItem extends Component {
 
           <div className="item-msg-status-wrapper">
             <div className="thread-list-item-msg">
-              {msg + unicodeMsg}
+              {msg}{unicodeMsg}
             </div>
 
           </div>

@@ -6,7 +6,7 @@ import ThreadBar from './threadBar.js';
 import ThreadMsg from './threadMsg.js';
 import ThreadInput from './threadInput.js';
 
-import {getThreadHistory, sendFbMsg} from '../../../actions';
+import {getThreadHistory, sendFbMsg, markAsRead} from '../../../actions';
 
 export default class ThreadWindow extends Component {
   constructor(props) {
@@ -16,7 +16,9 @@ export default class ThreadWindow extends Component {
 
     // ipcRenderer
     ipcRenderer.on('fb:thread_history_done', (event, data) => {
-      this.setState({list: data.concat(this.state.list)});
+      markAsRead(data[0].threadID);
+      this.setState({list: data});
+      this.refs.msgList.scrollTop = this.refs.msgList.scrollHeight;
     });
   }
 
@@ -27,7 +29,12 @@ export default class ThreadWindow extends Component {
 
     if (!this.props.compThread.threadID && nextProps.compThread) {
       getThreadHistory({id: nextProps.compThread.threadID, count: 20, type: 'initial', timestamp: undefined});
+      setTimeout(() => {
+        document.getElementById(`list-item-${nextProps.compThread.threadID}`).click();
+      }, 0);
       // return false;
+    } else if (this.props.compThread && this.props.compThread.threadID !== nextProps.compThread.threadID) {
+      getThreadHistory({id: nextProps.compThread.threadID, count: 20, type: 'initial', timestamp: undefined});
     }
 
     return true;
@@ -51,6 +58,10 @@ export default class ThreadWindow extends Component {
       timestamp: Date.now()
     }];
     this.setState({list: this.state.list.concat(msg)});
+    
+    setTimeout(() => {
+      this.refs.msgList.scrollTop = this.refs.msgList.scrollHeight;
+    }, 0);
   }
 
   onSendEvent() {}
@@ -58,7 +69,6 @@ export default class ThreadWindow extends Component {
   onLoadMoreMsg() {}
 
   componentDidMount() {
-    this.refs.msgList.scrollTop = this.refs.msgList.scrollHeight;
   }
 
 
@@ -69,12 +79,13 @@ export default class ThreadWindow extends Component {
     const list = this.state.list;
     let j = 0;
     let i = 0;
+    const currUser = this.props.compUser.id;
 
     while (i < list.length) {
       if (list[i].body) {
         let msgItem = [];
-
-        const person = (list[i].senderID === list[i].threadID) ? 'other' : 'me';
+        // console.log(list[i]);
+        const person = (list[i].senderID === currUser) ? 'me' : 'other';
         msgItem.push(<ThreadMsg key={i} compKey={list[i]} />);
         i++;
 

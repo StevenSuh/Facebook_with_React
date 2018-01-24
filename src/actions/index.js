@@ -30,3 +30,7 @@ export const getThreadList = (start, end) => {
 export const getThreadHistory = (obj) => {
   ipcRenderer.send('fb:thread_history_start', obj);
 };
+
+export const markAsRead = (id) => {
+  ipcRenderer.send('fb:mark_message_as_read', id);
+};

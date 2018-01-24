@@ -165,47 +165,40 @@ ipcMain.on('fb:send_message', (event, msg) => {
 
 ipcMain.on('fb:thread_list_start', (event, start, end) => {
     if (fb) {
-        fb.getFriendsList((err, data) => {
+        fb.getThreadListGraphQL(10, undefined, (err, data) => {
             if (err) return console.error(err);
-
-            const threadList = [];
+            
+            const currUser = fb.getCurrentUserID();
+            
             for (let i = 0; i < data.length; i++) {
-                threadList.push(new Promise((resolve, reject) => {
-                    fb.getThreadInfoGraphQL(data[i].userID, (err, info) => {
-                        if (err) {
-                            reject();
-                            return console.error(err);
-                        } else {
-                            resolve([info, data[i]]);
-                        }
-                    });
-                }).then((result) => {
-                    const pics = {};
-                    let str = '';
+                const pics = {};
+                let str = '';
 
-                    str += result[1].fullName;
-                    for (let i = 0; i < result[0].participantIDs.length; i++) {
-                        let curr = result[0].participantIDs[i];
-                        if (curr === fb.getCurrentUserID()) continue;
+                for (let j = 0; j < data[i].participants.length; j++) {
+                    let curr = data[i].participants[j];
 
-                        pics[curr] = `https://graph.facebook.com/${curr}/picture`;
+                    if (curr.userID === currUser) continue;
+                    
+                    str += curr.name + ', ';
+                    pics[curr.userID] = `https://graph.facebook.com/${curr.userID}/picture`;
+                }
+
+                if (!data[i].name && data[i].nicknames.length === 0)
+                    data[i].name = str.slice(0, -2);
+                else if (!data[i].name) {
+                    str = '';
+                    for (let j = 0; j < data[i].nicknames.length; j++) {
+                        let curr = data[i].nicknames[j];
+                        if (curr.userID === currUser) continue;
+
+                        str += curr.nickname + ', ';
                     }
+                    data[i].name = str.slice(0, -2);
+                }
 
-                    result[0].name = str;
-                    result[0].profilePics = pics;
-
-                    return result[0];
-                }).catch(() => {
-                    return console.error('fb:thread_list_start: promise failed');
-                }));
+                data[i].profilePics = pics;
             }
-
-            Promise.all(threadList).then((results) => {
-                // console.log(results);
-                mainWindow.webContents.send('fb:thread_list_done', results);
-            }).catch((errors) => {
-                return console.error(errors);
-            });
+            mainWindow.webContents.send('fb:thread_list_done', data);
         });
     } else {
         return console.error("fb:thread_list_start => Login before using the app.")
@@ -221,5 +214,15 @@ ipcMain.on('fb:thread_history_start', (event, obj) => {
         });
     } else {
         return console.error("fb:thread_info_start => Login before using the app.")
+    }
+});
+
+ipcMain.on('fb:mark_message_as_read', (event, id) => {
+    if (fb) {
+        fb.markAsRead(id, (err) => {
+            if (err) return console.error(err);
+        });
+    } else {
+        return console.error("fb:mark_message_as_read => Login before using the app.")
     }
 });
